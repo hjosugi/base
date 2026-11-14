@@ -1,0 +1,23 @@
+{
+  // oxfmt formats these files on save. Its options are in .oxfmtrc.json.
+  "[typescript][typescriptreact][javascript][javascriptreact][json][jsonc][css][markdown][yaml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true,
+    // Format the whole file, not only the changed lines.
+    "editor.formatOnSaveMode": "file"
+  },
+
+  // The Oxc extension can also lint with oxlint. This project lints with ESLint.
+  "oxc.enable.oxlint": false,
+
+  // Apply ESLint fixes when you save with the save command (not on auto save).
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Tailwind CSS uses at-rules such as @theme. The built-in CSS check does not know them.
+  "css.lint.unknownAtRules": "ignore",
+
+  "files.eol": "\n",
+  "files.insertFinalNewline": true
+}

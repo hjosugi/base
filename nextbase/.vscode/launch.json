@@ -1,0 +1,52 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Breakpoints in code that runs on the server:
+      // Server Components (app/page.tsx) and lib/api.ts when the server calls it.
+      // This starts `pnpm dev` itself. Stop any other dev server first.
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev --inspect"
+    },
+    {
+      // Breakpoints in Client Components (components/todo-app.tsx).
+      // Start `pnpm dev` in a terminal first. This opens the page in a new browser window.
+      //
+      // It uses Google Chrome. To use another Chromium browser, add
+      // "runtimeExecutable" with the path of the browser. For Brave on Linux:
+      //   "runtimeExecutable": "/usr/bin/brave"
+      "name": "Next.js: debug client-side",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    },
+    {
+      // Server and browser in one session.
+      // When the server is ready, the debugger opens the page in Google Chrome.
+      //
+      // "debugWithChrome" cannot take a browser path. To use the browser of
+      // "Next.js: debug client-side" instead, replace "serverReadyAction" with:
+      //   "serverReadyAction": {
+      //     "action": "startDebugging",
+      //     "name": "Next.js: debug client-side",
+      //     "killOnServerStop": true,
+      //     "pattern": "- Local:.+(https?://.+)"
+      //   }
+      "name": "Next.js: debug full stack",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+      "runtimeArgs": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}"
+      }
+    }
+  ]
+}
