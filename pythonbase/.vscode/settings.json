@@ -1,0 +1,22 @@
+{
+  // Ruff formats and fixes Python files on save.
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+
+  // Use mypy from the project .venv, with the config in pyproject.toml.
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+
+  // Run tests from the Testing view.
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}

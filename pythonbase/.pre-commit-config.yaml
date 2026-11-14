@@ -1,0 +1,46 @@
+# Run on every `git commit`.
+# Setup:   uv run pre-commit install
+# Run all: uv run pre-commit run --all-files
+minimum_pre_commit_version: "4.4.0"
+
+repos:
+  # General file checks.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  # Keep uv.lock in sync with pyproject.toml.
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.33
+    hooks:
+      - id: uv-lock
+
+  # Run ruff and mypy from the project venv.
+  # So the versions are the same as in uv.lock.
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run --frozen ruff check --fix
+        language: unsupported
+        types_or: [python, pyi]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run --frozen ruff format
+        language: unsupported
+        types_or: [python, pyi]
+      - id: mypy
+        name: mypy
+        # mypy reads `files` from pyproject.toml, so we pass no file names.
+        entry: uv run --frozen mypy
+        language: unsupported
+        types: [python]
+        pass_filenames: false
