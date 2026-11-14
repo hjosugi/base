@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Todo API: WebSocket / SSE demo</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 1100px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  section { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; }
+  h2 { margin-top: 0; font-size: 1.1rem; }
+  .status { font-size: 0.9rem; color: #555; }
+  pre { background: #f6f6f6; height: 320px; overflow: auto; padding: 0.5rem;
+        font-size: 0.8rem; white-space: pre-wrap; }
+  input { width: 14rem; }
+  button { margin: 0.2rem 0.2rem 0.2rem 0; }
+</style>
+</head>
+<body>
+<h1>Todo API: WebSocket / SSE demo</h1>
+<p>
+  <input id="title" placeholder="Todo title" value="Buy milk">
+  <button id="create-http">Create via HTTP POST</button>
+</p>
+
+<div class="cols">
+  <section>
+    <h2>SSE: GET /todos/events</h2>
+    <div class="status">state: <span id="sse-state">-</span>
+      / lastEventId: <span id="sse-last">-</span></div>
+    <button id="sse-connect">Connect</button>
+    <button id="sse-close">Close</button>
+    <pre id="sse-log"></pre>
+  </section>
+
+  <section>
+    <h2>WebSocket: /ws/todos</h2>
+    <div class="status">state: <span id="ws-state">-</span></div>
+    <button id="ws-connect">Connect</button>
+    <button id="ws-close">Close</button>
+    <button id="ws-ping">Send ping</button>
+    <button id="ws-create">Create via WS</button>
+    <button id="ws-bad">Send invalid</button>
+    <pre id="ws-log"></pre>
+  </section>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const log = (id, msg) => {
+  const el = $(id);
+  el.textContent += `${new Date().toLocaleTimeString()} ${msg}\n`;
+  el.scrollTop = el.scrollHeight;
+};
+
+// ---- HTTP ----
+$("create-http").onclick = async () => {
+  const res = await fetch("/todos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: $("title").value }),
+  });
+  log("sse-log", `(HTTP POST -> ${res.status})`);
+};
+
+// ---- SSE ----
+// EventSource reconnects by itself and sends Last-Event-ID.
+let es = null;
+const SSE_STATES = ["CONNECTING", "OPEN", "CLOSED"];
+const showSseState = () => { $("sse-state").textContent = es ? SSE_STATES[es.readyState] : "-"; };
+
+$("sse-connect").onclick = () => {
+  if (es) es.close();
+  es = new EventSource("/todos/events");
+  es.onopen = () => { showSseState(); log("sse-log", "open"); };
+  es.onerror = () => { showSseState(); log("sse-log", "error (browser will retry)"); };
+  for (const type of ["created", "updated", "deleted"]) {
+    es.addEventListener(type, (e) => {
+      $("sse-last").textContent = e.lastEventId;
+      log("sse-log", `id=${e.lastEventId} event=${type} data=${e.data}`);
+    });
+  }
+  showSseState();
+};
+$("sse-close").onclick = () => { if (es) { es.close(); showSseState(); log("sse-log", "closed"); } };
+
+// ---- WebSocket ----
+let ws = null;
+const WS_STATES = ["CONNECTING", "OPEN", "CLOSING", "CLOSED"];
+const showWsState = () => { $("ws-state").textContent = ws ? WS_STATES[ws.readyState] : "-"; };
+const send = (obj) => {
+  if (!ws || ws.readyState !== WebSocket.OPEN) { log("ws-log", "not connected"); return; }
+  const text = typeof obj === "string" ? obj : JSON.stringify(obj);
+  ws.send(text);
+  log("ws-log", `> ${text}`);
+};
+
+$("ws-connect").onclick = () => {
+  if (ws) ws.close();
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${proto}://${location.host}/ws/todos`);
+  ws.onopen = () => { showWsState(); log("ws-log", "open"); };
+  ws.onclose = (e) => { showWsState(); log("ws-log", `close code=${e.code}`); };
+  ws.onmessage = (e) => log("ws-log", `< ${e.data}`);
+  showWsState();
+};
+$("ws-close").onclick = () => { if (ws) ws.close(1000); };
+$("ws-ping").onclick = () => send({ type: "ping" });
+$("ws-create").onclick = () => send({ type: "create", title: $("title").value });
+$("ws-bad").onclick = () => send({ type: "create", title: "" });
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // F5: start the API under the debugger.
+      // We turn off reload, so there is only one process to debug.
+      "name": "FastAPI: debug (no reload)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fastapi",
+      "args": ["dev", "--no-reload"],
+      "envFile": "${workspaceFolder}/.env",
+      "jinja": true,
+      "justMyCode": true
+    },
+    {
+      // Step into FastAPI / Starlette / Pydantic code too.
+      "name": "FastAPI: debug (library code too)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "fastapi",
+      "args": ["dev", "--no-reload"],
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": false
+    },
+    {
+      // Attach to a server started in a terminal with:
+      //   uv run python -m debugpy --listen 5678 -m fastapi dev --no-reload
+      // The same command works for nvim-dap and for Docker.
+      "name": "Attach to debugpy (:5678)",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": { "host": "127.0.0.1", "port": 5678 },
+      "justMyCode": true
+    },
+    {
+      // Debug the test file that is open now.
+      // --no-cov: coverage and the debugger can get in each other's way.
+      "name": "pytest: current file",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["${file}", "-x", "-vv", "--no-cov"],
+      "justMyCode": false
+    }
+  ]
+}
