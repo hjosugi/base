@@ -1,0 +1,87 @@
+# Run from the repo root. `task` lists the tasks.
+# Each base also works alone: every command here is one you can type yourself
+# inside that directory.
+version: "3"
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  setup:
+    desc: "Install the dependencies of every base"
+    cmds:
+      - for: [pythonbase, fastapibase]
+        task: uv-sync
+        vars: { DIR: "{{.ITEM}}" }
+      - for: [reactbase, nextbase]
+        task: pnpm-install
+        vars: { DIR: "{{.ITEM}}" }
+
+  api:
+    desc: "fastapibase on http://127.0.0.1:8000/docs"
+    dir: fastapibase
+    cmds:
+      - uv run fastapi dev {{.CLI_ARGS}}
+
+  react:
+    desc: "reactbase on http://localhost:5173 (sends /api to :8000)"
+    dir: reactbase
+    cmds:
+      - pnpm dev {{.CLI_ARGS}}
+
+  next:
+    desc: "nextbase on http://localhost:3000 (sends /api to :8000)"
+    dir: nextbase
+    cmds:
+      - pnpm dev {{.CLI_ARGS}}
+
+  dev:
+    desc: "fastapibase + reactbase together"
+    deps: [api, react]
+
+  dev:next:
+    desc: "fastapibase + nextbase together"
+    deps: [api, next]
+
+  check:
+    desc: "Lint, format check, type check and tests of every base"
+    cmds:
+      - for: [pythonbase, fastapibase]
+        task: check-python
+        vars: { DIR: "{{.ITEM}}" }
+      - for: [reactbase, nextbase]
+        task: check-js
+        vars: { DIR: "{{.ITEM}}" }
+
+  uv-sync:
+    internal: true
+    label: "uv-sync:{{.DIR}}"
+    dir: "{{.DIR}}"
+    cmds:
+      - uv sync
+
+  pnpm-install:
+    internal: true
+    label: "pnpm-install:{{.DIR}}"
+    dir: "{{.DIR}}"
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  check-python:
+    internal: true
+    label: "check:{{.DIR}}"
+    dir: "{{.DIR}}"
+    cmds:
+      - uv run ruff check
+      - uv run ruff format --check
+      - uv run mypy
+      - uv run pytest -q
+
+  check-js:
+    internal: true
+    label: "check:{{.DIR}}"
+    dir: "{{.DIR}}"
+    cmds:
+      - pnpm check

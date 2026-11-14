@@ -1,0 +1,36 @@
+{
+  // Open with: code base.code-workspace
+  // Each folder keeps its own .vscode/ settings, so the Python folders use
+  // their own .venv and the JavaScript folders their own node_modules.
+  "folders": [
+    { "path": "fastapibase" },
+    { "path": "reactbase" },
+    { "path": "nextbase" },
+    { "path": "pythonbase" }
+  ],
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [],
+    "compounds": [
+      {
+        // Start the frontend first (task react), then run this.
+        // The backend starts under the Python debugger and the browser
+        // under the JavaScript debugger. Breakpoints work on both sides.
+        "name": "Full stack: FastAPI + React (Chrome)",
+        "configurations": [
+          { "folder": "fastapibase", "name": "FastAPI: debug (no reload)" },
+          { "folder": "reactbase", "name": "Browser: debug app (Chrome)" }
+        ],
+        "stopAll": true
+      },
+      {
+        "name": "Full stack: FastAPI + React (Brave)",
+        "configurations": [
+          { "folder": "fastapibase", "name": "FastAPI: debug (no reload)" },
+          { "folder": "reactbase", "name": "Browser: debug app (Brave)" }
+        ],
+        "stopAll": true
+      }
+    ]
+  }
+}
