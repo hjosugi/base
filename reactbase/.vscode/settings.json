@@ -1,0 +1,19 @@
+{
+  // oxfmt formats on save through the Oxc extension. Rules: .oxfmtrc.json
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+
+  // Apply safe oxlint fixes on an explicit save (Ctrl+S). Rules: .oxlintrc.json
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
+
+  // TypeScript 7: use the native language server from the
+  // "TypeScript (Native Preview)" extension.
+  "js/ts.experimental.useTsgo": true,
+
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}

@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Start the dev server first (pnpm dev), then press F5.
+      // Breakpoints in src/*.tsx stop in the editor.
+      "name": "Browser: debug app (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      // Same as above, for Brave on Linux.
+      // For another Chromium browser, change the path.
+      "name": "Browser: debug app (Brave)",
+      "type": "chrome",
+      "request": "launch",
+      "runtimeExecutable": "/usr/bin/brave",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      // Debug the test file that is open now.
+      "name": "Vitest: current file",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${relativeFile}"],
+      "autoAttachChildProcesses": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
