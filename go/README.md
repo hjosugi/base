@@ -2,6 +2,8 @@
 
 Go の CLI スターターです。Go 1.27.4、標準の gofmt / vet / test、gopls、Delve、golangci-lint を使います。サンプルは外部依存のない word-count CLI です。
 
+Nix の固定パッケージは Go 1.27.3 です。`go.mod` が要求する Go 1.27.4 は、初回の `go` コマンドで自動取得されます（ネット接続が必要です）。
+
 ## セットアップ
 
 | 方法                              | コマンド                        |

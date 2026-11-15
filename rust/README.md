@@ -2,6 +2,8 @@
 
 Rust の CLI スターターです。Rust 1.100.0、2024 Edition、rustfmt、Clippy、標準テスト、rust-analyzer、CodeLLDB を揃えています。サンプルは依存パッケージなしの word-count CLI です。
 
+`rust-toolchain.toml`、mise、Docker は Rust 1.100.0 を使います。Nix は `flake.lock` に含まれる Rust 1.99.1 を使うため、`Cargo.toml` の最低対応バージョンも 1.99.1 にしています。
+
 ## セットアップ
 
 | 方法                                  | コマンド                                                                    |

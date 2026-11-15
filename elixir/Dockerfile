@@ -8,7 +8,10 @@ COPY mix.exs .formatter.exs ./
 COPY lib ./lib
 COPY test ./test
 COPY README.md ./
-RUN mix do format --check-formatted, compile --warnings-as-errors, test, escript.build
+RUN mix format --check-formatted && \
+    mix compile --warnings-as-errors && \
+    mix test && \
+    mix escript.build
 
 ENTRYPOINT ["/app/word_count"]
 CMD ["README.md", "-n", "5"]

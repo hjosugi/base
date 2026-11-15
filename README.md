@@ -51,7 +51,7 @@ Vite :5173           Next.js :3000
 | Docker                    | 29.9.3 で確認                | 全部（任意）                           |
 | Nix                       | 2.35.6 で確認                | 全部（任意）                           |
 
-バージョンは 2026-11-15 に各公式リリースと公式 Docker Image を確認して固定しました。プレリリースは使っていません。Nix は `flake.lock` で nixpkgs 自体を固定するため、Haskell の補助ツールだけ mise / GHCup の最新版より古い版です（詳細は [haskell/README.md](haskell/README.md)）。
+バージョンは 2026-11-15 に各公式リリースと公式 Docker Image を確認して固定しました。プレリリースは使っていません。Nix は `flake.lock` で nixpkgs 自体を固定するため、mise / Docker と一部の版が異なります。Rust は 1.99.1、Go は 1.27.3 から `go.mod` の 1.27.4 を自動取得します。Haskell の補助ツールの版は [haskell/README.md](haskell/README.md) を参照してください。
 
 ### セットアップ方法
 
@@ -472,18 +472,18 @@ task check
 - python: Python 3.15.2 で Ruff、mypy、11 テスト（coverage 100%）
 - fastapi: Python 3.15.2 で Ruff、mypy、40 テスト（coverage 98.55%）
 - react: Node.js 26.13.1 / pnpm 12.20.0 で lint、整形、TypeScript 7、9 テスト、Vite production build
-- next: Node.js 26.13.1 / pnpm 12.20.0 で ESLint、整形、型生成、15 テスト
+- next: Node.js 26.13.1 / pnpm 12.20.0 で ESLint、整形、型生成、15 テスト、Docker 内の production build、`pnpm audit`（既知の脆弱性 0 件）
 - haskell: Nix の GHC 9.14.1 で Fourmolu、Cabal build、1 テスト
-- rust: Rust 1.100.0 で rustfmt、Clippy (`-D warnings`)、2 テスト
+- rust: Nix の Rust 1.99.1 で rustfmt、Clippy (`-D warnings`)、2 テスト。Docker の Rust 1.100.0 でもテストと release build
 - go: Go 1.27.4 toolchain で gofmt、vet、race detector 付きテスト
 - erlang: Nix の OTP 29.1.2 / rebar3 3.28.0 で erlfmt、2 EUnit、xref、Dialyzer
 - elixir: Nix の OTP 29.1.2 / Elixir 1.20.5 で formatter、warnings-as-errors、2 ExUnit
 - `flake.nix` の全9開発シェルが `flake.lock` から評価できること
+- 全9スターターの Docker image を Linux x86_64 で実際に build。各 Dockerfile 内のテストと `compose.yaml` の構文チェックも成功
 
 次のことは確認していません。
 
-- **Docker image の実 build。** Docker daemon が停止中だったため未実施です。全 `FROM` image の exact tag が registry に存在することと、`compose.yaml` の構文は確認しました。
-- **Next.js の production build。** この実行環境では Turbopack が内部処理用ポートを bind できず、sandbox の `Operation not permitted` で止まりました。lint、型検査、テストは通っています。
+- **Docker image の ARM64 build と、コンテナ同士をつないだ画面操作。**
 - **VS Code の画面での動作。** 設定ファイルは書式と設定名を確認しただけです。保存時の整形、デバッグ構成、`starters.code-workspace` の複合構成は、画面では試していません。
 - **ブラウザのデバッグ構成**（Chrome、Brave）。
 - **Neovim からの Next.js のデバッグ。** next の構成は VS Code 用です。Neovim で「Next.js: debug full stack」を開始しても、サーバーが起動しませんでした。

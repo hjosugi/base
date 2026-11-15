@@ -15,7 +15,8 @@ RUN set -eux; \
     base_url="https://downloads.haskell.org/~cabal/cabal-install-${CABAL_VERSION}"; \
     curl -fsSLO "${base_url}/${archive}"; \
     curl -fsSLO "${base_url}/SHA256SUMS"; \
-    grep " ${archive}$" SHA256SUMS | sha256sum --check --strict -; \
+    awk -v archive="$archive" '$2 == archive || $2 == "./" archive' SHA256SUMS | \
+      sha256sum --check --strict -; \
     tar -xJf "$archive"; \
     install -m 0755 cabal /usr/local/bin/cabal; \
     rm -f "$archive" SHA256SUMS cabal; \
