@@ -1,0 +1,8 @@
+{application, word_count, [
+    {description, "Small Erlang CLI starter"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {applications, [kernel, stdlib]},
+    {env, []},
+    {modules, []}
+]}.

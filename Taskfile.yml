@@ -1,5 +1,5 @@
 # Run from the repo root. `task` lists the tasks.
-# Each base also works alone: every command here is one you can type yourself
+# Each starter also works alone: every command here is one you can type yourself
 # inside that directory.
 version: "3"
 
@@ -10,50 +10,129 @@ tasks:
       - task --list
 
   setup:
-    desc: "Install the dependencies of every base"
+    desc: "Install the dependencies of every starter"
     cmds:
-      - for: [pythonbase, fastapibase]
+      - for: [python, fastapi]
         task: uv-sync
         vars: { DIR: "{{.ITEM}}" }
-      - for: [reactbase, nextbase]
+      - for: [react, next]
         task: pnpm-install
         vars: { DIR: "{{.ITEM}}" }
+      - task: setup:haskell
+      - task: setup:rust
+      - task: setup:go
+      - task: setup:erlang
+      - task: setup:elixir
 
   api:
-    desc: "fastapibase on http://127.0.0.1:8000/docs"
-    dir: fastapibase
+    desc: "fastapi on http://127.0.0.1:8000/docs"
+    dir: fastapi
     cmds:
       - uv run fastapi dev {{.CLI_ARGS}}
 
   react:
-    desc: "reactbase on http://localhost:5173 (sends /api to :8000)"
-    dir: reactbase
+    desc: "react on http://localhost:5173 (sends /api to :8000)"
+    dir: react
     cmds:
       - pnpm dev {{.CLI_ARGS}}
 
   next:
-    desc: "nextbase on http://localhost:3000 (sends /api to :8000)"
-    dir: nextbase
+    desc: "next on http://localhost:3000 (sends /api to :8000)"
+    dir: next
     cmds:
       - pnpm dev {{.CLI_ARGS}}
 
   dev:
-    desc: "fastapibase + reactbase together"
+    desc: "fastapi + react together"
     deps: [api, react]
 
   dev:next:
-    desc: "fastapibase + nextbase together"
+    desc: "fastapi + next together"
     deps: [api, next]
 
   check:
-    desc: "Lint, format check, type check and tests of every base"
+    desc: "Lint, format check, type check and tests of every starter"
     cmds:
-      - for: [pythonbase, fastapibase]
+      - for: [python, fastapi]
         task: check-python
         vars: { DIR: "{{.ITEM}}" }
-      - for: [reactbase, nextbase]
+      - for: [react, next]
         task: check-js
         vars: { DIR: "{{.ITEM}}" }
+      - task: check:haskell
+      - task: check:rust
+      - task: check:go
+      - task: check:erlang
+      - task: check:elixir
+
+  setup:haskell:
+    desc: "Download Haskell dependencies"
+    dir: haskell
+    cmds:
+      - cabal build all --only-download
+
+  setup:rust:
+    desc: "Download Rust dependencies"
+    dir: rust
+    cmds:
+      - cargo fetch --locked
+
+  setup:go:
+    desc: "Download Go dependencies"
+    dir: go
+    cmds:
+      - go mod download
+
+  setup:erlang:
+    desc: "Download Erlang dependencies and plugins"
+    dir: erlang
+    cmds:
+      - rebar3 get-deps
+
+  setup:elixir:
+    desc: "Download Elixir dependencies"
+    dir: elixir
+    cmds:
+      - mix deps.get
+
+  check:haskell:
+    desc: "Format, build and test Haskell"
+    dir: haskell
+    cmds:
+      - fourmolu --mode check app src test
+      - cabal build all --ghc-options=-Werror
+      - cabal test all
+      - cabal check
+
+  check:rust:
+    desc: "Format, lint and test Rust"
+    dir: rust
+    cmds:
+      - cargo fmt --all --check
+      - cargo clippy --all-targets --all-features -- -D warnings
+      - cargo test --locked
+
+  check:go:
+    desc: "Format, vet and test Go"
+    dir: go
+    cmds:
+      - test -z "$(gofmt -l .)"
+      - go vet ./...
+      - go test -race ./...
+
+  check:erlang:
+    desc: "Format, analyze and test Erlang"
+    dir: erlang
+    cmds:
+      - rebar3 check
+
+  check:elixir:
+    desc: "Format, compile and test Elixir"
+    dir: elixir
+    cmds:
+      - mix format --check-formatted
+      - mix compile --warnings-as-errors
+      - mix test
 
   uv-sync:
     internal: true

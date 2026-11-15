@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Elixir: tests",
+      "type": "mix_task",
+      "request": "launch",
+      "task": "test",
+      "projectDir": "${workspaceFolder}",
+      "exitAfterTaskReturns": true
+    }
+  ]
+}

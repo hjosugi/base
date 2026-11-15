@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "haskell.haskell",
+    "phoityne.phoityne-vscode",
+    "tamasfe.even-better-toml",
+    "editorconfig.editorconfig"
+  ]
+}

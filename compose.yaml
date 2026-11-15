@@ -1,0 +1,53 @@
+name: language-starters
+
+services:
+  python:
+    build: ./python
+    profiles: [cli]
+
+  fastapi:
+    build: ./fastapi
+    ports:
+      - "8000:8000"
+
+  react:
+    build: ./react
+    ports:
+      - "5173:5173"
+    depends_on:
+      - fastapi
+    environment:
+      API_URL: http://fastapi:8000
+
+  next:
+    build:
+      context: ./next
+      args:
+        API_URL: http://fastapi:8000
+    profiles: [next]
+    ports:
+      - "3000:3000"
+    depends_on:
+      - fastapi
+    environment:
+      API_URL: http://fastapi:8000
+
+  haskell:
+    build: ./haskell
+    profiles: [cli]
+
+  rust:
+    build: ./rust
+    profiles: [cli]
+
+  go:
+    build: ./go
+    profiles: [cli]
+
+  erlang:
+    build: ./erlang
+    profiles: [cli]
+
+  elixir:
+    build: ./elixir
+    profiles: [cli]

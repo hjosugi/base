@@ -1,4 +1,4 @@
-# Each base has its own .gitignore. This one covers the repo root.
+# Each starter has its own .gitignore. This one covers the repo root.
 node_modules/
 .venv/
 __pycache__/

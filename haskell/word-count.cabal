@@ -1,0 +1,43 @@
+cabal-version: 3.14
+name: word-count
+version: 0.1.0.0
+synopsis: Small Haskell CLI starter
+description: A small dependency-free word-count command used as a starter project.
+category: Text
+maintainer: project maintainers
+license: BSD-3-Clause
+build-type: Simple
+
+common warnings
+  default-language: GHC2024
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Widentities
+    -Wincomplete-record-updates
+    -Wincomplete-uni-patterns
+    -Wmissing-export-lists
+    -Wpartial-fields
+
+library
+  import: warnings
+  hs-source-dirs: src
+  exposed-modules: WordCount
+  build-depends: base >=4.18 && <5
+
+executable word-count
+  import: warnings
+  hs-source-dirs: app
+  main-is: Main.hs
+  build-depends:
+    base >=4.18 && <5,
+    word-count
+
+test-suite word-count-test
+  import: warnings
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: Main.hs
+  build-depends:
+    base >=4.18 && <5,
+    word-count

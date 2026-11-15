@@ -1,0 +1,9 @@
+{
+  "[elixir]": {
+    "editor.defaultFormatter": "elixir-lsp.elixir-ls",
+    "editor.formatOnSave": true
+  },
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}

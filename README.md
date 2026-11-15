@@ -1,16 +1,21 @@
-# base
+# language starters
 
-新しいプロジェクトを始めるときの土台（スターター）を 4 つ入れたリポジトリです。
+新しいプロジェクトを始めるときのスターターを 9 つ入れたリポジトリです。
 どれも、そのディレクトリだけをコピーして使えます。
 
 VS Code と Neovim (LazyVim) のどちらでも、保存時の整形、lint、型チェック、テスト、デバッグが動くようにしてあります。
 
-| ディレクトリ               | 何の土台か                                | 主な中身                                                  |
-| -------------------------- | ----------------------------------------- | --------------------------------------------------------- |
-| [pythonbase](pythonbase)   | Python のライブラリ、コマンドラインツール | uv、Ruff、mypy、pytest、pre-commit                        |
-| [fastapibase](fastapibase) | FastAPI の API（REST、WebSocket、SSE）    | 上に加えて FastAPI、Pydantic、13 ステップのハンズオン     |
-| [reactbase](reactbase)     | React (Vite) の画面。fastapibase を呼ぶ   | Vite 8、React 19、TypeScript 7、Oxlint、oxfmt、Vitest     |
-| [nextbase](nextbase)       | Next.js の画面。fastapibase を呼ぶ        | Next.js 16、TypeScript 5、ESLint、Tailwind、oxfmt、Vitest |
+| ディレクトリ       | 用途                     | 主な中身                                   |
+| ------------------ | ------------------------ | ------------------------------------------ |
+| [python](python)   | Python のライブラリ、CLI | Python 3.15、uv、Ruff、mypy、pytest        |
+| [fastapi](fastapi) | FastAPI の API           | REST、WebSocket、SSE、Pydantic             |
+| [react](react)     | React (Vite) の画面      | React 19、TypeScript 7、Oxlint、Vitest     |
+| [next](next)       | Next.js の画面           | Next.js 16、TypeScript 5、ESLint、Tailwind |
+| [haskell](haskell) | Haskell の CLI           | GHC、Cabal、HLS、Fourmolu                  |
+| [rust](rust)       | Rust の CLI              | Cargo、rustfmt、Clippy、rust-analyzer      |
+| [go](go)           | Go の CLI                | gofmt、vet、gopls、Delve                   |
+| [erlang](erlang)   | Erlang/OTP の CLI        | rebar3、erlfmt、EUnit、ELP、Dialyzer       |
+| [elixir](elixir)   | Elixir の CLI            | Mix、ExUnit、ElixirLS                      |
 
 正確なバージョンは、それぞれの README とロックファイルにあります。
 
@@ -20,12 +25,12 @@ VS Code と Neovim (LazyVim) のどちらでも、保存時の整形、lint、�
           ブラウザ
    ┌─────────┴──────────┐
    v                    v
-reactbase            nextbase
+react            next
 Vite :5173           Next.js :3000
    │ /api/* を転送       │ /api/* を転送
    └─────────┬──────────┘
              v
-        fastapibase
+        fastapi
         FastAPI :8000
 ```
 
@@ -33,16 +38,38 @@ Vite :5173           Next.js :3000
 
 ## 1. 必要なツール
 
-| ツール  | 用途                                          | 確認したバージョン |
-| ------- | --------------------------------------------- | ------------------ |
-| git     |                                               | 2.56               |
-| uv      | Python 本体、依存、venv の管理                | 0.13.8             |
-| Node.js | reactbase、nextbase                           | 26.13.1            |
-| pnpm    | JavaScript のパッケージ管理                   | 12.19.0            |
-| Task    | 任意。ルートから全部を動かす `task` コマンド  | 3.54.0             |
-| xh      | 任意。`curl` より短く書ける HTTP クライアント | 0.26.3             |
+| ツール                    | 固定した安定版               | 使うディレクトリ                       |
+| ------------------------- | ---------------------------- | -------------------------------------- |
+| Python / uv               | 3.15.2 / 0.13.8              | python、fastapi                        |
+| Node.js / pnpm            | 26.13.1 LTS / 12.20.0        | react、next                            |
+| GHC / Cabal / HLS         | 9.14.1 / 3.18.2.0 / 2.15.0.0 | haskell                                |
+| Rust                      | 1.100.0                      | rust                                   |
+| Go                        | 1.27.4                       | go                                     |
+| Erlang/OTP / rebar3 / ELP | 29.1.2 / 3.28.0 / 2026-10-14 | erlang                                 |
+| Elixir / Erlang/OTP       | 1.20.5 / 29.1.2              | elixir                                 |
+| Task                      | 3.54.0                       | ルートからまとめて操作するとき（任意） |
+| Docker                    | 29.9.3 で確認                | 全部（任意）                           |
+| Nix                       | 2.35.6 で確認                | 全部（任意）                           |
 
-Node.js は 22.22.2 以上、24.15.0 以上、26 以上のどれかが必要です。Python は uv が自動で入れます。
+バージョンは 2026-11-15 に各公式リリースと公式 Docker Image を確認して固定しました。プレリリースは使っていません。Nix は `flake.lock` で nixpkgs 自体を固定するため、Haskell の補助ツールだけ mise / GHCup の最新版より古い版です（詳細は [haskell/README.md](haskell/README.md)）。
+
+### セットアップ方法
+
+各ディレクトリの README に通常インストール、mise、Nix、Docker の手順があります。
+
+```sh
+# mise: 対象ディレクトリの mise.toml に書かれた正確な版を入れる
+cd rust && mise install
+
+# Nix: flake.lock で固定した nixpkgs の開発シェル
+nix develop .#rust
+
+# Docker: 各ディレクトリ単体でビルドできる
+docker build -t rust-starter rust
+docker run --rm rust-starter
+```
+
+全 Dockerfile を Compose から参照できます。Web 側は `docker compose up --build fastapi react`、CLI は `docker compose --profile cli run --rm rust` のように実行します。
 
 ```sh
 # Arch 系 (CachyOS など)。Task のコマンド名は go-task になる
@@ -59,78 +86,85 @@ winget install Git.Git astral-sh.uv OpenJS.NodeJS.LTS pnpm.pnpm Task.Task ducaal
 ```sh
 git clone https://github.com/hjosugi/base
 cd base
-task setup    # 4 つとも依存を入れる
-task dev      # fastapibase と reactbase を同時に起動する
+task setup    # 9 つとも依存を入れる
+task dev      # fastapi と react を同時に起動する
 ```
 
 - <http://localhost:5173> が React の画面です。
 - <http://127.0.0.1:8000/docs> が API の Swagger UI です。
 - 止めるときは Ctrl+C です。
 
-| コマンド        | 内容                                              |
-| --------------- | ------------------------------------------------- |
-| `task setup`    | 全部の依存を入れる                                |
-| `task dev`      | fastapibase + reactbase                           |
-| `task dev:next` | fastapibase + nextbase（<http://localhost:3000>） |
-| `task api`      | fastapibase だけ                                  |
-| `task react`    | reactbase だけ                                    |
-| `task next`     | nextbase だけ                                     |
-| `task check`    | 全部の lint、整形チェック、型チェック、テスト     |
+| コマンド        | 内容                                          |
+| --------------- | --------------------------------------------- |
+| `task setup`    | 全部の依存を入れる                            |
+| `task dev`      | fastapi + react                               |
+| `task dev:next` | fastapi + next（<http://localhost:3000>）     |
+| `task api`      | fastapi だけ                                  |
+| `task react`    | react だけ                                    |
+| `task next`     | next だけ                                     |
+| `task check`    | 全部の lint、整形チェック、型チェック、テスト |
 
 Task を入れない場合は、各ディレクトリで直接実行します。
 
 ```sh
-cd fastapibase && uv sync && uv run fastapi dev    # ターミナル 1
-cd reactbase && pnpm install && pnpm dev           # ターミナル 2
+cd fastapi && uv sync && uv run fastapi dev    # ターミナル 1
+cd react && pnpm install && pnpm dev           # ターミナル 2
 ```
 
 ## 3. 新しいプロジェクトを始める
 
-使いたい base のディレクトリだけを取り出します。
+使いたいスターターのディレクトリだけを取り出します。
 
 ```sh
 # clone せずに 1 つだけ取り出す
-npx tiged hjosugi/base/reactbase my-app
+npx tiged hjosugi/base/react my-app
 
 # clone 済みなら、コピーでもよい（node_modules や .venv は含めない）
-cp -r base/reactbase my-app
+cp -r base/react my-app
 ```
 
-そのあとの手順（名前の変更など）は、各 base の README の「使い方」にあります。
+そのあとの手順（名前の変更など）は、各 README にあります。
 
 ## 4. エディタの準備
 
 ### VS Code
 
-次の拡張機能を入れます。各 base の `.vscode/settings.json` が、これらを前提にしています。
+次の拡張機能を入れます。各スターターの `.vscode/settings.json` が、これらを前提にしています。
 
-| 拡張機能                    | ID                              | 使う base               |
-| --------------------------- | ------------------------------- | ----------------------- |
-| Python（Debugger を含む）   | `ms-python.python`              | pythonbase、fastapibase |
-| Ruff                        | `charliermarsh.ruff`            | pythonbase、fastapibase |
-| Mypy Type Checker           | `ms-python.mypy-type-checker`   | pythonbase、fastapibase |
-| FastAPI                     | `FastAPILabs.fastapi-vscode`    | fastapibase             |
-| Even Better TOML            | `tamasfe.even-better-toml`      | pythonbase、fastapibase |
-| Oxc                         | `oxc.oxc-vscode`                | reactbase、nextbase     |
-| TypeScript (Native Preview) | `TypeScriptTeam.native-preview` | reactbase               |
-| ESLint                      | `dbaeumer.vscode-eslint`        | nextbase                |
-| Tailwind CSS IntelliSense   | `bradlc.vscode-tailwindcss`     | nextbase                |
-| Vitest                      | `vitest.explorer`               | reactbase、nextbase     |
-| EditorConfig                | `editorconfig.editorconfig`     | 全部                    |
+| 拡張機能                    | ID                                                | 対象            |
+| --------------------------- | ------------------------------------------------- | --------------- |
+| Python（Debugger を含む）   | `ms-python.python`                                | python、fastapi |
+| Ruff                        | `charliermarsh.ruff`                              | python、fastapi |
+| Mypy Type Checker           | `ms-python.mypy-type-checker`                     | python、fastapi |
+| FastAPI                     | `FastAPILabs.fastapi-vscode`                      | fastapi         |
+| Even Better TOML            | `tamasfe.even-better-toml`                        | python、fastapi |
+| Oxc                         | `oxc.oxc-vscode`                                  | react、next     |
+| TypeScript (Native Preview) | `TypeScriptTeam.native-preview`                   | react           |
+| ESLint                      | `dbaeumer.vscode-eslint`                          | next            |
+| Tailwind CSS IntelliSense   | `bradlc.vscode-tailwindcss`                       | next            |
+| Vitest                      | `vitest.explorer`                                 | react、next     |
+| Haskell                     | `haskell.haskell`                                 | haskell         |
+| rust-analyzer / CodeLLDB    | `rust-lang.rust-analyzer` / `vadimcn.vscode-lldb` | rust            |
+| Go                          | `golang.go`                                       | go              |
+| Erlang Language Platform    | `whatsapp.erlang-language-platform`               | erlang          |
+| ElixirLS                    | `elixir-lsp.elixir-ls`                            | elixir          |
+| EditorConfig                | `editorconfig.editorconfig`                       | 全部            |
 
 ```sh
 for ext in ms-python.python charliermarsh.ruff ms-python.mypy-type-checker \
   FastAPILabs.fastapi-vscode tamasfe.even-better-toml oxc.oxc-vscode \
   TypeScriptTeam.native-preview dbaeumer.vscode-eslint bradlc.vscode-tailwindcss \
-  vitest.explorer editorconfig.editorconfig; do
+  vitest.explorer haskell.haskell rust-lang.rust-analyzer vadimcn.vscode-lldb \
+  golang.go whatsapp.erlang-language-platform elixir-lsp.elixir-ls \
+  editorconfig.editorconfig; do
   code --install-extension "$ext"
 done
 ```
 
 開き方は 2 つあります。
 
-- **1 つだけ開く**: `code reactbase` のように、base のディレクトリを開きます。
-- **4 つまとめて開く**: `code base.code-workspace` を開きます。フォルダーごとに設定が分かれるので、Python は各自の `.venv`、JavaScript は各自の `node_modules` を使います。API とブラウザを同時にデバッグする構成「Full stack: FastAPI + React」も入っています。
+- **1 つだけ開く**: `code react` のように、スターターのディレクトリを開きます。
+- **9 つまとめて開く**: `code starters.code-workspace` を開きます。フォルダーごとの設定とツールチェーンが使われます。
 
 保存すると整形されます。Ctrl+S で保存したときは、lint の自動修正も走ります。
 
@@ -144,8 +178,13 @@ done
 | `lang.typescript`        | TypeScript と JavaScript の土台、Node とブラウザのデバッガ       |
 | `lang.typescript.tsc`    | TypeScript 7 のネイティブ LSP                                    |
 | `lang.typescript.oxc`    | Oxlint の LSP と oxfmt                                           |
-| `linting.eslint`         | ESLint の LSP（nextbase）                                        |
-| `lang.tailwind`          | Tailwind CSS の補完（nextbase）                                  |
+| `linting.eslint`         | ESLint の LSP（next）                                            |
+| `lang.tailwind`          | Tailwind CSS の補完（next）                                      |
+| `lang.haskell`           | HLS、Fourmolu、HLint、Haskell の REPL とテスト                   |
+| `lang.rust`              | rust-analyzer、rustfmt、Clippy、CodeLLDB                         |
+| `lang.go`                | gopls、gofumpt、golangci-lint、Delve                             |
+| `lang.erlang`            | Erlang の構文と LSP の土台                                       |
+| `lang.elixir`            | ElixirLS、Mix formatter、neotest-elixir                          |
 | `lang.json`、`lang.toml` | `package.json` や `pyproject.toml` の補完                        |
 | `dap.core`               | デバッガの画面とキー                                             |
 | `test.core`              | テストの実行（neotest）                                          |
@@ -154,7 +193,7 @@ done
 さらに、`~/.config/nvim/lua/plugins/` に次のファイルを置きます。
 
 ```lua
--- lua/plugins/base.lua
+-- lua/plugins/starters.lua
 return {
   -- Run Vitest with <leader>tt. The test.core extra has no Vitest adapter.
   {
@@ -178,15 +217,26 @@ return {
       },
     },
   },
+  -- LazyVim 16 の lang.erlang は保守終了した erlang_ls を参照するため、
+  -- 現行の Erlang Language Platform (elp) に置き換える。
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        erlangls = { enabled = false },
+        elp = {},
+      },
+    },
+  },
 }
 ```
 
 使うときの注意です。
 
 - **初回は LSP がまだ入っていません。** ファイルを開くと Mason がインストールを始めます。`<leader>cm` で終わったことを確認して、Neovim を開き直します。
-- **base のディレクトリで起動します**（`cd fastapibase && nvim`）。デバッグ構成の `.vscode/launch.json` は、Neovim を起動したディレクトリから探すからです。
+- **対象ディレクトリで起動します**（`cd fastapi && nvim`）。デバッグ構成の `.vscode/launch.json` は、Neovim を起動したディレクトリから探すからです。
 - **デバッグ構成は VS Code と共通です。** `<leader>dc` を押すと、`launch.json` の構成が選べます。
-- **nextbase は TypeScript 5 です。** エディタの LSP には、Mason が入れた TypeScript 7 が使われます。`pnpm typecheck` と `pnpm build` は、プロジェクトの TypeScript 5 を使います。
+- **next は TypeScript 5 です。** エディタの LSP には、Mason が入れた TypeScript 7 が使われます。`pnpm typecheck` と `pnpm build` は、プロジェクトの TypeScript 5 を使います。
 
 ## 5. ショートカット早見表
 
@@ -254,10 +304,10 @@ LazyVim の `<leader>` はスペースキーです。スペースを押して少
 
 ## 6. ハンズオン: API と画面をまたいで 1 項目足す
 
-Todo に「優先度（priority）」を足します。fastapibase と reactbase の両方を変えます。
+Todo に「優先度（priority）」を足します。fastapi と react の両方を変えます。
 型チェッカーが「次に直す場所」を教えてくれることを確かめるのが目的です。
 
-各 base の README にも、その base だけのハンズオンがあります。fastapibase のものが一番長く、空のディレクトリから API を作ります。
+既存4スターターの README には、それぞれのハンズオンもあります。fastapi のものが一番長く、空のディレクトリから API を作ります。
 
 ### 準備
 
@@ -277,15 +327,15 @@ curl -X POST localhost:8000/todos -H 'content-type: application/json' -d '{"titl
 
 「定義へ移動」で、画面から API まで順に読みます。
 
-1. `reactbase/src/components/TodoForm.tsx` の `onAdd`
-2. `reactbase/src/useTodos.ts` の `add` と `createTodo`
-3. `reactbase/src/api.ts` の `createTodo`（ここで `POST /api/todos` を送る）
-4. `fastapibase/src/todo_api/routers/todos.py` の `create_todo`（ここで受ける）
-5. `fastapibase/src/todo_api/schemas.py` の `TodoCreate` と `Todo`
+1. `react/src/components/TodoForm.tsx` の `onAdd`
+2. `react/src/useTodos.ts` の `add` と `createTodo`
+3. `react/src/api.ts` の `createTodo`（ここで `POST /api/todos` を送る）
+4. `fastapi/src/todo_api/routers/todos.py` の `create_todo`（ここで受ける）
+5. `fastapi/src/todo_api/schemas.py` の `TodoCreate` と `Todo`
 
 ### 手順 2: API の型に priority を足す
 
-`fastapibase/src/todo_api/schemas.py` の 3 つのクラスに、1 行ずつ足します。
+`fastapi/src/todo_api/schemas.py` の 3 つのクラスに、1 行ずつ足します。
 
 ```python
 class TodoCreate(BaseModel):
@@ -309,7 +359,7 @@ class Todo(BaseModel):
 
 ### 手順 3: 型チェッカーに次の場所を聞く
 
-`fastapibase` で型チェックを実行します。
+`fastapi` で型チェックを実行します。
 
 ```sh
 uv run mypy
@@ -343,7 +393,7 @@ tests/test_todos.py:126: error: Missing named argument "priority" for "Todo"  [c
 
 ### 手順 4: テストを足す
 
-`fastapibase/tests/test_todos.py` の最後に足します。
+`fastapi/tests/test_todos.py` の最後に足します。
 
 ```python
 def test_priority_defaults_to_2(client: TestClient) -> None:
@@ -360,7 +410,7 @@ def test_priority_out_of_range_is_422(client: TestClient) -> None:
 ### 手順 5: デバッガで値を見る
 
 1. `task dev` を止めます（デバッガが同じポート 8000 を使うため）。画面だけ `task react` で起動し直します。
-2. `fastapibase/src/todo_api/routers/todos.py` の `todo = repo.add(payload)` の行にブレークポイントを置きます。
+2. `fastapi/src/todo_api/routers/todos.py` の `todo = repo.add(payload)` の行にブレークポイントを置きます。
 3. デバッグ構成「FastAPI: debug (no reload)」を開始します。
 4. priority を付けて Todo を作ります。
 
@@ -372,7 +422,7 @@ xh :8000/todos title="debug me" priority:=1
 
 ### 手順 6: 画面の型に足す
 
-`reactbase/src/api.ts` の `Todo` に 1 行足します。
+`react/src/api.ts` の `Todo` に 1 行足します。
 
 ```ts
 export type Todo = {
@@ -384,7 +434,7 @@ export type Todo = {
 };
 ```
 
-`reactbase` で型チェックを実行します。
+`react` で型チェックを実行します。
 
 ```sh
 pnpm typecheck
@@ -398,7 +448,7 @@ src/App.test.tsx(7,7): error TS2741: Property 'priority' is missing in type '{ .
 
 ### 手順 7: 画面に出す
 
-`reactbase/src/components/TodoList.tsx` で、タイトルの次の行に足します。
+`react/src/components/TodoList.tsx` で、タイトルの次の行に足します。
 
 ```tsx
             <span className={todo.done ? 'done' : undefined}>{todo.title}</span>
@@ -417,18 +467,24 @@ task check
 
 ## 7. 確認したこと、していないこと
 
-2026 年 11 月に、CachyOS (Linux) で次のことを実際に動かして確認しました。
+2026 年 11 月 15 日に、CachyOS (Linux) で次のことを実際に動かして確認しました。
 
-- 4 つの base の lint、整形チェック、型チェック、テスト、ビルド（`task check` が通る）
-- reactbase と nextbase から、プロキシ経由で fastapibase の作成、更新、削除ができること。reactbase では SSE も届くこと
-- Neovim (LazyVim 16、Neovim 0.12): 4 つの base で LSP がつながり、診断が出て、保存時の整形がプロジェクトの設定どおりになること
-- Neovim: pytest と Vitest を neotest で実行できること
-- Neovim: `launch.json` の構成で、FastAPI と Vitest をブレークポイントで止められること
-- 6 章のハンズオンの手順 2 から 8
+- python: Python 3.15.2 で Ruff、mypy、11 テスト（coverage 100%）
+- fastapi: Python 3.15.2 で Ruff、mypy、40 テスト（coverage 98.55%）
+- react: Node.js 26.13.1 / pnpm 12.20.0 で lint、整形、TypeScript 7、9 テスト、Vite production build
+- next: Node.js 26.13.1 / pnpm 12.20.0 で ESLint、整形、型生成、15 テスト
+- haskell: Nix の GHC 9.14.1 で Fourmolu、Cabal build、1 テスト
+- rust: Rust 1.100.0 で rustfmt、Clippy (`-D warnings`)、2 テスト
+- go: Go 1.27.4 toolchain で gofmt、vet、race detector 付きテスト
+- erlang: Nix の OTP 29.1.2 / rebar3 3.28.0 で erlfmt、2 EUnit、xref、Dialyzer
+- elixir: Nix の OTP 29.1.2 / Elixir 1.20.5 で formatter、warnings-as-errors、2 ExUnit
+- `flake.nix` の全9開発シェルが `flake.lock` から評価できること
 
 次のことは確認していません。
 
-- **VS Code の画面での動作。** 設定ファイルは書式と設定名を確認しただけです。保存時の整形、デバッグ構成、`base.code-workspace` の複合構成は、画面では試していません。
+- **Docker image の実 build。** Docker daemon が停止中だったため未実施です。全 `FROM` image の exact tag が registry に存在することと、`compose.yaml` の構文は確認しました。
+- **Next.js の production build。** この実行環境では Turbopack が内部処理用ポートを bind できず、sandbox の `Operation not permitted` で止まりました。lint、型検査、テストは通っています。
+- **VS Code の画面での動作。** 設定ファイルは書式と設定名を確認しただけです。保存時の整形、デバッグ構成、`starters.code-workspace` の複合構成は、画面では試していません。
 - **ブラウザのデバッグ構成**（Chrome、Brave）。
-- **Neovim からの Next.js のデバッグ。** nextbase の構成は VS Code 用です。Neovim で「Next.js: debug full stack」を開始しても、サーバーが起動しませんでした。
+- **Neovim からの Next.js のデバッグ。** next の構成は VS Code 用です。Neovim で「Next.js: debug full stack」を開始しても、サーバーが起動しませんでした。
 - **Windows と macOS。**

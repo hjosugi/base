@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Haskell: word-count README.md",
+      "type": "ghc",
+      "request": "launch",
+      "internalConsoleOptions": "openOnSessionStart",
+      "workspace": "${workspaceFolder}",
+      "startup": "${workspaceFolder}/app/Main.hs",
+      "startupFunc": "main",
+      "startupArgs": "README.md -n 5",
+      "stopOnEntry": false,
+      "mainArgs": "README.md -n 5"
+    }
+  ]
+}

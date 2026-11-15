@@ -1,0 +1,14 @@
+min_version = "2026.11.1"
+
+[settings]
+experimental = true
+
+[plugins]
+"vfox-backend:mise-ghcup" = "packslip:wasp-lang/mise-ghcup#3.0.0"
+
+[tools]
+ghcup = "0.2.6.2"
+"mise-ghcup:ghc" = "9.14.1"
+cabal = "3.18.2.0"
+"mise-ghcup:hls" = "2.15.0.0"
+"github:fourmolu/fourmolu" = "v0.21.0.0"

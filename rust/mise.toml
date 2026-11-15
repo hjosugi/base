@@ -1,0 +1,4 @@
+min_version = "2026.11.1"
+
+[tools]
+rust = "1.100.0"

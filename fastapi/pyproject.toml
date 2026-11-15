@@ -1,0 +1,101 @@
+[project]
+name = "todo-api"
+version = "0.1.0"
+description = "FastAPI hands-on: a small Todo API with a full dev toolchain."
+readme = "README.md"
+requires-python = ">=3.15"
+dependencies = [
+    "fastapi[standard]>=0.162.5",
+    "pydantic-settings>=2.16.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "debugpy>=1.8.22",
+    "mypy>=2.4.1",
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.5",
+]
+
+# ---------------------------------------------------------------------------
+# FastAPI CLI: `fastapi dev` / `fastapi run` read the app from here.
+# The VS Code FastAPI extension also reads this.
+# ---------------------------------------------------------------------------
+[tool.fastapi]
+entrypoint = "todo_api.main:app"
+
+# ---------------------------------------------------------------------------
+# Ruff: linter + formatter
+# target-version is taken from requires-python.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+src = ["src", "tests"]
+# Ruff also formats code blocks in Markdown.
+# README snippets are short excerpts, so we skip them.
+extend-exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "C4",    # flake8-comprehensions
+    "DTZ",   # flake8-datetimez (naive datetime)
+    "T10",   # flake8-debugger (left-over breakpoint())
+    "T20",   # flake8-print (left-over print())
+    "S",     # flake8-bandit (security)
+    "PT",    # flake8-pytest-style
+    "ASYNC", # flake8-async
+    "FAST",  # FastAPI-specific rules
+    "RUF",   # Ruff-specific rules
+]
+
+[tool.ruff.lint.per-file-ignores]
+# assert is the normal way to check things in pytest.
+"tests/**" = ["S101"]
+
+# ---------------------------------------------------------------------------
+# mypy: static type checker (strict mode + Pydantic plugin)
+# ---------------------------------------------------------------------------
+[tool.mypy]
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["src", "tests"]
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+# ---------------------------------------------------------------------------
+# pytest + coverage
+# [tool.pytest] (native TOML types) needs pytest 9.0 or later.
+# ---------------------------------------------------------------------------
+[tool.pytest]
+minversion = "9.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--cov=todo_api",
+    "--cov-report=term-missing",
+]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+fail_under = 90
+exclude_also = ['if __name__ == "__main__":']

@@ -1,0 +1,41 @@
+{
+  // Open with: code starters.code-workspace
+  // Each folder keeps its own .vscode/ settings, so the Python folders use
+  // their own .venv and the JavaScript folders their own node_modules.
+  "folders": [
+    { "path": "fastapi" },
+    { "path": "react" },
+    { "path": "next" },
+    { "path": "python" },
+    { "path": "haskell" },
+    { "path": "rust" },
+    { "path": "go" },
+    { "path": "erlang" },
+    { "path": "elixir" }
+  ],
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [],
+    "compounds": [
+      {
+        // Start the frontend first (task react), then run this.
+        // The backend starts under the Python debugger and the browser
+        // under the JavaScript debugger. Breakpoints work on both sides.
+        "name": "Full stack: FastAPI + React (Chrome)",
+        "configurations": [
+          { "folder": "fastapi", "name": "FastAPI: debug (no reload)" },
+          { "folder": "react", "name": "Browser: debug app (Chrome)" }
+        ],
+        "stopAll": true
+      },
+      {
+        "name": "Full stack: FastAPI + React (Brave)",
+        "configurations": [
+          { "folder": "fastapi", "name": "FastAPI: debug (no reload)" },
+          { "folder": "react", "name": "Browser: debug app (Brave)" }
+        ],
+        "stopAll": true
+      }
+    ]
+  }
+}

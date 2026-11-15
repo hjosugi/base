@@ -1,0 +1,6 @@
+/_build/
+/deps/
+/doc/
+/cover/
+/word_count
+/erl_crash.dump
